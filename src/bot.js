@@ -1,44 +1,20 @@
-require('dotenv').config()
+let { ManageCommands, ROLES_MSG, PREFIX, CLIENT_ID } = require('./helper')
 const { Client } = require('discord.js')
-let commandManager = require('./Commands')
 
 const bot = new Client({
     partials: ["MESSAGE", "REACTION"]
 })
 
-const PREFIX = "!"
-const ROLES_MSG = "748484666646069258"
-
-
-const ManageCommands = (msg) =>{
-    const [COMMAND, ...ARGS] = msg.content
-        .trim()
-        .substring(PREFIX.length)
-        .split(/\s+/)
-
-    const command = new commandManager(msg)
-    for (const obj in command.COMMANDS) {
-        if (obj === COMMAND){
-            command.COMMANDS[obj]
-            return
-        }
-    }
-    msg.reply("That is an invalid command")
-}
-
-
-bot.login(process.env.DISCORD_BOT_CLIENT_ID)
-
-bot.on('ready', ()=>{
-    console.log(`${bot.user.tag} has logged in`);
-})
+// Login
+bot.login(CLIENT_ID)
+bot.on('ready', ()=> console.log(`${bot.user.tag} has logged in`))
 
 bot.on('message', (message)=>{
     if (message.author.bot) return
     if (message.content.startsWith(PREFIX)) ManageCommands(message)
-    if (message.content === 'hello') return message.reply("https://www.youtube.com/watch?v=UlNR_cPdh0s")
 })
 
+//  Add roles
 bot.on('messageReactionAdd', (reaction, user)=>{
     const { name } = reaction.emoji;
     const member = reaction.message.guild.members.cache.get(user.id)
@@ -60,6 +36,7 @@ bot.on('messageReactionAdd', (reaction, user)=>{
     }
 })
 
+// Remove roles
 bot.on('messageReactionRemove', (reaction, user)=>{
     const { name } = reaction.emoji;
     const member = reaction.message.guild.members.cache.get(user.id)
@@ -79,4 +56,10 @@ bot.on('messageReactionRemove', (reaction, user)=>{
                 break
         }
     }
+})
+
+// DM new user
+bot.on('guildMemberAdd', member =>{
+    member.send(`Hi ${member.user}`)
+    member.send(`Welcome to ${member.guild.name}`)
 })
