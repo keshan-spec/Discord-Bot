@@ -1,12 +1,30 @@
 require('dotenv').config()
-
 const { Client } = require('discord.js')
+let commandManager = require('./Commands')
+
 const bot = new Client({
     partials: ["MESSAGE", "REACTION"]
 })
-const FUNNY = ["ur mom gay", "hi loser", "bye"] // JOKE
 
-const ROLES_MSG = '748484666646069258'
+const PREFIX = "!"
+const ROLES_MSG = "748484666646069258"
+
+
+const ManageCommands = (msg) =>{
+    const [COMMAND, ...ARGS] = msg.content
+        .trim()
+        .substring(PREFIX.length)
+        .split(/\s+/)
+
+    const command = new commandManager(msg)
+    for (const obj in command.COMMANDS) {
+        if (obj === COMMAND){
+            command.COMMANDS[obj]
+            return
+        }
+    }
+    msg.reply("That is an invalid command")
+}
 
 
 bot.login(process.env.DISCORD_BOT_CLIENT_ID)
@@ -17,12 +35,8 @@ bot.on('ready', ()=>{
 
 bot.on('message', (message)=>{
     if (message.author.bot) return
-    if (message.content === '$logout'){
-        message.channel.send("Goodbye cruel world")
-        return bot.destroy()
-    }
+    if (message.content.startsWith(PREFIX)) ManageCommands(message)
     if (message.content === 'hello') return message.reply("https://www.youtube.com/watch?v=UlNR_cPdh0s")
-    message.reply(FUNNY[Math.floor(Math.random() * FUNNY.length)])
 })
 
 bot.on('messageReactionAdd', (reaction, user)=>{
