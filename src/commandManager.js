@@ -1,66 +1,60 @@
 require('dotenv').config()
-class Commands{
-    constructor(msg, bot){
-        this.message = msg
-        this.bot = bot
-        this.COMMANDS = {
-            "kick": function (){ return this.kickUser() },
-            "ban": function () { return this.banUser(id) },
-            "reset":this.resetBot,
-            "list":this.listCommands
-        }
-    }
+let {kickUser,banUser,help,searchMusic} = require('./helpers')
 
-    kickUser(id){
-        const user = this.message.guild.member.cache.get(id)
-        if (user){
-            user.kick()
-            .then((res)=>console.log(res))
-        }
-    }
-
-    banUser(id){
-        console.log("User banned");
-    }
-
-    listCommands(){
-        // let commands = Object.keys(this.COMMANDS).join(', ')
-        // this.message.channel.send(`List of commands\n${commands}`)
-    }
-
-    resetBot(){
-        this.bot.destroy(); 
-        this.bot.login(process.env.DISCORD_BOT_CLIENT_ID)
-    }
-}
-
-exports.Commands = Commands
+// GLOBAL VARIABLES
 exports.PREFIX = "!"
+exports.ON_ADD_DM = false
 exports.SERVER_NAME = "Programming"
 exports.ROLES_MSG = "748484666646069258"
+exports.BOT_CHANNELS = ["748810605112197131"]
 exports.CLIENT_ID = process.env.DISCORD_BOT_CLIENT_ID
+
+// COMMANDS OBJECT
 exports.COMMANDS_OBJ = {
     "kick": {
         "permission": ["KICK_MEMBERS"],
         "args": true,
-        "arg_type": "Discord ID"
+        "arg_type": "Discord ID",
+        "callback": (function () {
+            if (arguments.length < 2) return false
+            return kickUser(arguments["0"], arguments["1"])
+        })
     },
     "ban": {
         "permission": ["BAN_MEMBERS"],
         "args": true,
-        "arg_type": "Discord ID"
+        "arg_type": "Discord ID",
+        "callback": (function () {
+            if (arguments.length < 2) return false
+            return banUser(arguments["0"], arguments["1"])
+        })
     },
     "reset": {
         "permission": ["ADMINISTRATOR"],
-        "args": false
+        "args": false,
+        "callback": (function () {
+            this.resetBot(arguments["0"], arguments["1"])
+        })
+
     },
     "die": {
         "permission": ["ADMINISTRATOR"],
         "args": false
     },
-    "list": {
+    "help": {
         "permission": [],
-        "args": false
+        "args": false,
+        "callback": (function () {
+            return help(arguments["0"], arguments["1"])
+        })
+    },
+    "search": {
+        "permission": [],
+        "args": true,
+        "arg_type": "Music name/keyword",
+        "callback": (function () {
+            return searchMusic(arguments["0"], arguments["1"])
+        })
     },
 }
 
@@ -100,15 +94,8 @@ exports.ManageCommands = (msg) => {
     for (const obj in this.COMMANDS_OBJ) {
         if (obj == CMD) {
             if (this.validate(msg, this.COMMANDS_OBJ[obj], ARGS)) {
-                // CURRENTLY ONLY KICKS ! must change
-                const user = msg.guild.members.cache.get(ARGS[0])
-                if (user) {
-                    user.kick()
-                        .then((res) => msg.channel.send(`Kicked user, ${res.user}`))
-                        .catch((err) => msg.channel.send(`Error kicking user!`))
-                } else {
-                    msg.reply(`User does not exist in the server`)
-                }
+                // if (this.COMMANDS_OBJ[obj]["args"]) return this.COMMANDS_OBJ[obj]["callback"](msg, ARGS)
+                return this.COMMANDS_OBJ[obj]["callback"](msg, ARGS)
             }
             return
         }

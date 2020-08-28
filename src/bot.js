@@ -1,4 +1,4 @@
-let { ManageCommands, ROLES_MSG, PREFIX, CLIENT_ID } = require('./helper')
+let { ManageCommands, ROLES_MSG, PREFIX, CLIENT_ID, BOT_CHANNELS, ON_ADD_DM } = require('./commandManager')
 const { Client } = require('discord.js')
 
 const bot = new Client({
@@ -10,6 +10,7 @@ bot.login(CLIENT_ID)
 bot.on('ready', ()=> console.log(`${bot.user.tag} has logged in`))
 
 bot.on('message', (message)=>{
+    if (!BOT_CHANNELS.includes(message.channel.id)) return
     if (message.author.bot) return
     if (message.content.startsWith(PREFIX)) ManageCommands(message)
 })
@@ -59,7 +60,9 @@ bot.on('messageReactionRemove', (reaction, user)=>{
 })
 
 // DM new user
-bot.on('guildMemberAdd', member =>{
-    member.send(`Hi ${member.user}`)
-    member.send(`Welcome to ${member.guild.name}`)
-})
+if (ON_ADD_DM){
+    bot.on('guildMemberAdd', member =>{
+        member.send(`Hi ${member.user}`)
+        member.send(`Welcome to ${member.guild.name}`)
+    })
+}
