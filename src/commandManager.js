@@ -1,5 +1,5 @@
 require('dotenv').config()
-let {kickUser,banUser,help,searchMusic} = require('./helpers')
+let {kickUser,banUser,help,searchMusic, meme, dogeify,uwu, spongify} = require('./helpers')
 
 // GLOBAL VARIABLES
 exports.PREFIX = "!"
@@ -54,6 +54,38 @@ exports.COMMANDS_OBJ = {
         "arg_type": "Music name/keyword",
         "callback": (function () {
             return searchMusic(arguments["0"], arguments["1"])
+        })
+    },
+    "meme": {
+        "permission": [],
+        "args": false,
+        "arg_type": "Meme type (ex; react, sad)",
+        "callback": (function () {
+            return meme(arguments["0"], arguments["1"])
+        })
+    },
+    "dogefy": {
+        "permission": [],
+        "args": true,
+        "arg_type": "Text to be dogefied",
+        "callback": (function () {
+            return dogeify(arguments["0"], arguments["1"])
+        })
+    },
+    "uwufy": {
+        "permission": [],
+        "args": true,
+        "arg_type": "Text to be uwued",
+        "callback": (function () {
+            return uwu(arguments["0"], arguments["1"])
+        })
+    },
+    "spongify": {
+        "permission": [],
+        "args": true,
+        "arg_type": "Text to be SpONgEd",
+        "callback": (function () {
+            return spongify(arguments["0"], arguments["1"])
         })
     },
 }
