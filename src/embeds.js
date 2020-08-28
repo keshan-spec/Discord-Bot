@@ -1,8 +1,15 @@
 let discord = require('discord.js')
 
-exports.memeEmbed = new discord.MessageEmbed()
+exports.memeEmbed = (url, title) => {
+    return new discord.MessageEmbed()
     .setColor('#0099ff')
-    .setTitle('Meme')
-    .setDescription('Some description here')
-    .setImage('https://i.imgur.com/wSTFkRM.png')
+    .setImage(url)
     .setTimestamp()
+    .setFooter(title, 'https://i.imgur.com/wSTFkRM.png')
+}
+
+exports.textEmbed = (color, text) => {
+    return new discord.MessageEmbed()
+    .setColor(color)
+    .setTitle(text)
+}

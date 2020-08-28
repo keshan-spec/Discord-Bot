@@ -4,7 +4,10 @@ let uwufy = require('uwufy');
 let spongify = require('spongify') 
 
 // custom
-let { memeEmbed } = require('../embeds')
+let { memeEmbed, textEmbed } = require('../embeds')
+let random = (arr) => { return arr[Math.floor(Math.random() * arr.length)] }
+let COLORS = ["#30afe3","#009ddb","#1f344c","#f1654c"]
+
 
 // fun
 exports.meme = (obj, args) => {
@@ -28,41 +31,30 @@ exports.meme = (obj, args) => {
             "AdviceAnimals"
         ]
     }
-    let dice = []
 
+    let excuse = ["Sorry man, couldn't find a meme", "Oopsie, try again", "UwU, Try agwain pwease"]
+    let dice = []
 
     if (args.length > 0) {
         if (!Object.keys(types).includes(args[0])) return obj.channel.send(`${args[0]} is not a meme type`)
         dice = types[args[0]]
-    } else {
-        dice = types["funny"]
-    }
+    } else dice = types["funny"]
 
-    let subreddit = dice[Math.floor(Math.random() * dice.length)];
+    let subreddit = random(dice);
     obj.channel.startTyping();
 
     randomPuppy(subreddit).then(async url => {
-        await obj.channel.send({
-            files: [{
-                attachment: url,
-                name: 'meme.png'
-            }]
-        }).then(() => obj.channel.stopTyping());
-    }).catch(err => obj.channel.send("Sorry man, couldn't find a meme"));
+        await obj.reply(memeEmbed(url, 'r/'+subreddit))
+        .then(() => obj.channel.stopTyping());
+    }).catch(err => obj.channel.send(random(excuse)));
 }
 
 exports.dogeify = async (obj, args) => {
     await dogeify(args.join(' '))
-        .then((res) => obj.reply(res))
-        .catch((err) => obj.channel.send(err))
+        .then((res) => obj.reply(textEmbed(random(COLORS), res)))
+        .catch((err) => obj.channel.send(textEmbed(random(COLORS), err)))
 }
 
-exports.uwu = async (obj, args) => {
-    let msg = uwufy(args.join(' '))
-    obj.reply(msg)
-}
+exports.uwu = async (obj, args) => { obj.reply(textEmbed(random(COLORS), uwufy(args.join(' ')))) }
 
-exports.spongify = async (obj, args) => {
-    let msg = spongify.convert(args.join(' '))
-    obj.reply(msg)
-}
+exports.spongify = async (obj, args) => { obj.reply(textEmbed(random(COLORS), spongify.convert(args.join(' ')))) }
