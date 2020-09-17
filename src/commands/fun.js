@@ -51,10 +51,14 @@ exports.meme = (obj, args) => {
 
 exports.dogeify = async (obj, args) => {
     await dogeify(args.join(' '))
-        .then((res) => obj.reply(textEmbed(random(COLORS), res)))
+        .then((res) => obj.reply(textEmbed(random(COLORS), res, obj.member.user)))
         .catch((err) => obj.channel.send(textEmbed(random(COLORS), err)))
 }
 
-exports.uwu = async (obj, args) => { obj.reply(textEmbed(random(COLORS), uwufy(args.join(' ')))) }
+exports.uwu = async (obj, args) => {
+    obj.reply(textEmbed(random(COLORS), uwufy(args.join(' ')), obj.member.user))
+}
 
-exports.spongify = async (obj, args) => { obj.reply(textEmbed(random(COLORS), spongify.convert(args.join(' ')))) }
+exports.spongify = async (obj, args) => {
+    obj.reply(textEmbed(random(COLORS), spongify.convert(args.join(' ')), obj.member.user))
+}

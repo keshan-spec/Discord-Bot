@@ -9,6 +9,12 @@ exports.ROLES_MSG = "748484666646069258"
 exports.BOT_CHANNELS = ["748810605112197131"]
 exports.CLIENT_ID = process.env.DISCORD_BOT_CLIENT_ID
 
+// activity
+exports.ACTIVITY = {
+    "streaming": false,
+    "game":"Minecraft"
+}
+
 
 // validates the commands, arguements, and the user permissions
 exports.validate = (msg, obj, usr_arg) => {
@@ -48,7 +54,7 @@ exports.ManageCommands = (msg) => {
             return
         }
     }
-    msg.reply("That is an invalid command")
+    // msg.reply("That is an invalid command")
     return
 }
 
